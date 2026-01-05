@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -284,10 +283,6 @@ main{
       <div id="fichaDados"></div>
     </div>
 
-  </div>
-</section>
-
-    <div id="fichaDados"></div>
   </div>
 </section>
 
