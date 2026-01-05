@@ -165,6 +165,12 @@ main{
 .btn-fechar:hover{
   transform: scale(1.2);
 }
+.top-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
 
   
 </style>
@@ -206,9 +212,25 @@ main{
 
 <!-- DASHBOARD -->
 <section id="dashboard" class="hidden">
-  <button class="icon-btn azul voltar" onclick="voltar()"><i class="fa-solid fa-house"></i></button>
+
+  <div class="top-actions">
+    <button class="icon-btn azul voltar" onclick="voltar()">
+      <i class="fa-solid fa-house"></i>
+    </button>
+
+    <button class="icon-btn azul" onclick="recarregarDashboard()">
+      <i class="fa-solid fa-rotate"></i>
+    </button>
+  </div>
+
   <div class="grid">
-    <div class="card"><h3>Funcionários Ativos</h3><h1>328</h1></div>
+ 
+
+  <div class="grid">
+<div class="card">
+  <h3>Funcionários Ativos</h3>
+  <h1 id="totalFuncionarios">0</h1>
+</div>
     <div class="card"><h3>Faturamento Mensal</h3><h1>R$ 1.250.000</h1></div>
     <div class="card"><h3>Contratos Ativos</h3><h1>46</h1></div>
   </div>
@@ -280,9 +302,10 @@ main{
 
     <div style="display:grid;grid-template-columns:200px 1fr;gap:30px">
       <img id="fichaFoto" style="width:200px;height:200px;border-radius:12px;object-fit:cover">
-      <div id="fichaDados"></div>
+      <div id="fichaDados">
     </div>
 
+    <div id="fichaDados"></div>
   </div>
 </section>
 
@@ -294,6 +317,12 @@ function fecharFicha(){
 }
 </script>
 
+<script>
+function atualizarTotalFuncionarios() {
+  const funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+  document.getElementById('totalFuncionarios').innerText = funcionarios.length;
+}
+</script>
 
   <script>
 function imprimirFuncionarios(){
@@ -355,7 +384,12 @@ function imprimirFuncionarios(){
     
 </script>
 
-  
+  <script>
+function recarregarDashboard() {
+  location.reload();
+}
+</script>
+
 <script>
 function show(id){
   document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));
@@ -399,6 +433,7 @@ function adicionarFuncionario(){
 
   limparFormularioFuncionario();
   fecharForm();
+    atualizarTotalFuncionarios();
 }
 
 
@@ -463,6 +498,7 @@ function carregarFuncionarios(){
 }
 
   carregarFuncionarios();
+document.addEventListener('DOMContentLoaded', atualizarTotalFuncionarios);
 
 </script>
 
