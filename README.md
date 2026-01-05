@@ -304,8 +304,6 @@ main{
       <div id="fichaDados">
     </div>
 
-    <div id="fichaDados"></div>
-  </div>
 </section>
 
 </main>
