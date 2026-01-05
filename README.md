@@ -225,7 +225,6 @@ main{
 
   <div class="grid">
  
-
   <div class="grid">
 <div class="card">
   <h3>Funcionários Ativos</h3>
@@ -384,10 +383,17 @@ function imprimirFuncionarios(){
     
 </script>
 
-  <script>
+<script>
 function recarregarDashboard() {
+  localStorage.setItem('secaoAtiva', 'dashboard');
   location.reload();
 }
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const secao = localStorage.getItem('secaoAtiva') || 'home';
+  show(secao);
+});
 </script>
 
 <script>
