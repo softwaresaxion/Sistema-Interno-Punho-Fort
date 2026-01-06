@@ -230,7 +230,10 @@ main{
   <h3>Funcionários Ativos</h3>
   <h1 id="totalFuncionarios">0</h1>
 </div>
-    <div class="card"><h3>Faturamento Mensal</h3><h1>R$ 1.250.000</h1></div>
+    <div class="card">
+  <h3>Faturamento Mensal</h3>
+  <h1 id="totalSalarios">R$ 0,00</h1>
+</div>
     <div class="card"><h3>Contratos Ativos</h3><h1>46</h1></div>
   </div>
   <div class="card" style="margin-top:30px">
@@ -421,8 +424,10 @@ function adicionarFuncionario(){
     cargo: document.getElementById('cargo').value,
     departamento: document.getElementById('departamento').value,
     unidade: document.getElementById('unidade').value,
+    salario: document.getElementById('salario').value,
     admissao: document.getElementById('admissao').value,
     foto: document.getElementById('foto').value || 'https://via.placeholder.com/120'
+    
   };
 
   if(!funcionario.nome || !funcionario.departamento){
@@ -438,6 +443,8 @@ function adicionarFuncionario(){
   limparFormularioFuncionario();
   fecharForm();
     atualizarTotalFuncionarios();
+    atualizarTotalSalarios();
+
 }
 
 
@@ -502,8 +509,44 @@ function carregarFuncionarios(){
 }
 
   carregarFuncionarios();
-document.addEventListener('DOMContentLoaded', atualizarTotalFuncionarios);
+document.addEventListener('DOMContentLoaded', () => {
+  atualizarTotalFuncionarios();
+  atualizarTotalSalarios();
+});
 
+</script>
+
+      <script>
+function atualizarTotalSalarios(){
+  const funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+  let total = 0;
+
+  funcionarios.forEach(f => {
+    if(f.salario){
+      // Remove R$, pontos e vírgulas
+      let valor = f.salario.replace(/\D/g, '');
+      total += Number(valor) / 100;
+    }
+  });
+
+  const campo = document.getElementById('totalSalarios');
+  if(campo){
+    campo.innerText = total.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+  }
+}
+</script>
+
+<script>
+function formatarSalario(input){
+  let valor = input.value.replace(/\D/g, '');
+  valor = (valor / 100).toFixed(2);
+  valor = valor.replace('.', ',');
+  valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  input.value = 'R$ ' + valor;
+}
 </script>
 
 <!-- MODAL FORM -->
@@ -515,8 +558,28 @@ document.addEventListener('DOMContentLoaded', atualizarTotalFuncionarios);
     <input id="email" placeholder="E-mail corporativo" style="width:100%;padding:10px;margin-bottom:10px">
     <input id="telefone" placeholder="Telefone" style="width:100%;padding:10px;margin-bottom:10px">
     <input id="cargo" placeholder="Cargo" style="width:100%;padding:10px;margin-bottom:10px">
-    <input id="departamento" placeholder="Departamento" style="width:100%;padding:10px;margin-bottom:10px">
+<select id="departamento" style="width:100%;padding:10px;margin-bottom:10px">
+  <option value="">Selecione a unidade</option>
+
+  <!-- PERNAMBUCO -->
+  <option>Atacadão S.A. (Recife)</option>
+  <option>Atacadão S.A. (Jaboatão dos Guararapes)</option>
+  <option>Atacadão S.A. (Olinda)</option>
+  <option>Atacadão S.A. (Cabo de Santo Agostinho)</option>
+  <option>Atacadão S.A. (Caruaru)</option>
+  <option>Atacadão S.A. (Petrolina)</option>
+
+  <!-- PARAÍBA -->
+  <option>Atacadão S.A. (João Pessoa)</option>
+  <option>Atacadão S.A. (Campina Grande)</option>
+  <option>Atacadão S.A. (Santa Rita)</option>
+  <option>Atacadão S.A. (Patos)</option>
+</select>
+
     <input id="unidade" placeholder="Unidade / Local de trabalho" style="width:100%;padding:10px;margin-bottom:10px">
+    <input id="salario" placeholder="Salário (R$)"
+       style="width:100%;padding:10px;margin-bottom:10px"
+       oninput="formatarSalario(this)">
     <input id="admissao" type="date" placeholder="Data de admissão" style="width:100%;padding:10px;margin-bottom:10px">
     <input id="foto" placeholder="URL da foto do funcionário" style="width:100%;padding:10px;margin-bottom:10px">
     <div style="display:flex;gap:10px;justify-content:flex-end">
