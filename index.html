@@ -2,7 +2,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Punho Fort - Sistema Interno</title>
+<title>Sistema Interno Corporativo</title>
 
 <!-- ICONES -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -223,7 +223,7 @@ main{
 <body>
 
 <header>
-  <h1>Punho Fort - Sistema Interno</h1>
+  <h1>Sistema Interno Corporativo</h1>
   <div id="top-actions"></div>
 </header>
 
@@ -468,19 +468,17 @@ function fecharForm(){
 
 function adicionarFuncionario(){
   const funcionario = {
-    nome: document.getElementById('nome').value,
-    cpf: document.getElementById('cpf').value,
-    email: document.getElementById('email').value,
-    telefone: document.getElementById('telefone').value,
+    nome: document.getElementById('nome').value.trim(),
+    cpf: document.getElementById('cpf').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    telefone: document.getElementById('telefone').value.trim(),
     cargo: document.getElementById('cargo').value,
     departamento: document.getElementById('departamento').value,
     unidade: document.getElementById('unidade').value,
     salario: document.getElementById('salario').value,
     admissao: document.getElementById('admissao').value,
     foto: document.getElementById('foto').value || 'https://via.placeholder.com/120',
-  historico: []   // 👈 ADICIONE ESTA LINHA
-    
-    
+    historico: []
   };
 
   if(!funcionario.nome || !funcionario.departamento){
@@ -490,15 +488,16 @@ function adicionarFuncionario(){
 
   funcionarios.push(funcionario);
 
-  salvarFuncionarios();   // 💾 SALVA NO LOCALSTORAGE
+  salvarFuncionarios();
   renderGaleria();
+
+  atualizarTotalFuncionarios();
+  atualizarTotalSalarios();
 
   limparFormularioFuncionario();
   fecharForm();
-    atualizarTotalFuncionarios();
-    atualizarTotalSalarios();
-
 }
+
 function toggleModoExclusao(){
   if(!modoExclusao){
     modoExclusao = true;
@@ -520,6 +519,17 @@ function toggleModoExclusao(){
   }
 }
 
+function limparFormularioFuncionario(){
+  const campos = [
+    'nome','cpf','email','telefone','cargo',
+    'departamento','unidade','salario','admissao','foto'
+  ];
+
+  campos.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+}
 
 function renderGaleria(){
   const galeria = document.getElementById('galeria');
