@@ -530,6 +530,16 @@ function limparFormularioFuncionario(){
     if(el) el.value = '';
   });
 }
+function limparFuncionariosLocalStorage(){
+  if(confirm('Deseja apagar todos os funcionários cadastrados?')){
+    localStorage.removeItem('funcionarios');
+    funcionarios = [];
+    renderGaleria();
+    atualizarTotalFuncionarios();
+    atualizarTotalSalarios();
+    alert('Funcionários apagados com sucesso!');
+  }
+}
 
 function renderGaleria(){
   const galeria = document.getElementById('galeria');
@@ -686,6 +696,10 @@ function formatarSalario(input){
     <input id="foto" placeholder="URL da foto do funcionário" style="width:100%;padding:10px;margin-bottom:10px">
     <div style="display:flex;gap:10px;justify-content:flex-end">
       <button onclick="fecharForm()">Cancelar</button>
+      <button type="button" onclick="limparFuncionariosLocalStorage()">
+  Apagar Funcionários
+</button>
+
       <button onclick="adicionarFuncionario()">Salvar</button>
     </div>
      <button onclick="excluirFuncionario()" 
@@ -705,3 +719,5 @@ function formatarSalario(input){
 
 </body>
 </html>
+
+
