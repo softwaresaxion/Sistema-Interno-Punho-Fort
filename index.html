@@ -2,7 +2,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema Interno Corporativo</title>
+<title>Punho Fort - Sistema Interno</title>
 
 <!-- ICONES -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -172,13 +172,58 @@ main{
   margin-bottom: 20px;
 }
 
+  /* ===== MODO EXCLUSÃO ===== */
+.card.selecionavel {
+  border: 2px dashed var(--vermelho);
+}
+
+.checkbox-func {
+  margin-right: 10px;
+  transform: scale(1.3);
+}
+
+/* MODAL CONFIRMAÇÃO */
+#confirmarExclusao {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.confirm-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 14px;
+  max-width: 360px;
+  text-align: center;
+}
+
+.confirm-card button {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-nao {
+  background: #ddd;
+}
+
+.btn-sim {
+  background: var(--azul);
+  color: #fff;
+}
+
   
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Sistema Interno Corporativo</h1>
+  <h1>Punho Fort - Sistema Interno</h1>
   <div id="top-actions"></div>
 </header>
 
@@ -217,7 +262,6 @@ main{
     <button class="icon-btn azul voltar" onclick="voltar()">
       <i class="fa-solid fa-house"></i>
     </button>
-
     <button class="icon-btn azul" onclick="recarregarDashboard()">
       <i class="fa-solid fa-rotate"></i>
     </button>
@@ -252,6 +296,10 @@ main{
   <div class="icon-btn verde" onclick="imprimirFuncionarios()" title="Imprimir relação">
     <i class="fa-solid fa-print"></i>
   </div>
+
+   <div class="icon-btn vermelho" onclick="toggleModoExclusao()" title="Excluir funcionários">
+  <i class="fa-solid fa-trash"></i>
+</div>  
 
   <div class="icon-btn azul" onclick="abrirForm()" title="Novo funcionário">
     <i class="fa-solid fa-user-plus"></i>
@@ -406,6 +454,9 @@ function voltar(){show('home')}
 
 // ===== FUNCIONÁRIOS =====
 let funcionarios = [];
+let modoExclusao = false;
+let selecionados = new Set();
+
 
 function abrirForm(){
   document.getElementById('modal').style.display = 'flex';
@@ -426,7 +477,9 @@ function adicionarFuncionario(){
     unidade: document.getElementById('unidade').value,
     salario: document.getElementById('salario').value,
     admissao: document.getElementById('admissao').value,
-    foto: document.getElementById('foto').value || 'https://via.placeholder.com/120'
+    foto: document.getElementById('foto').value || 'https://via.placeholder.com/120',
+  historico: []   // 👈 ADICIONE ESTA LINHA
+    
     
   };
 
@@ -446,22 +499,61 @@ function adicionarFuncionario(){
     atualizarTotalSalarios();
 
 }
+function toggleModoExclusao(){
+  if(!modoExclusao){
+    modoExclusao = true;
+    selecionados.clear();
+    renderGaleria();
+    return;
+  }
+
+  // já está em modo exclusão
+  if(selecionados.size === 0){
+    modoExclusao = false;
+    renderGaleria();
+    return;
+  }
+
+  const modal = document.getElementById('confirmarExclusao');
+  if(modal){
+    modal.style.display = 'flex';
+  }
+}
 
 
 function renderGaleria(){
   const galeria = document.getElementById('galeria');
+  if(!galeria) return;
+
   galeria.innerHTML = '';
+
   funcionarios.forEach((f, index) => {
+    const checkbox = modoExclusao
+      ? `<input type="checkbox"
+                 class="checkbox-func"
+                 ${selecionados.has(index) ? 'checked' : ''}
+                 onclick="event.stopPropagation()">`
+      : '';
+
+    const onclick = modoExclusao
+      ? `selecionarFuncionario(${index})`
+      : `abrirFicha(${index})`;
+
     galeria.innerHTML += `
-      <div class="card" style="display:flex; align-items:center; gap:15px; cursor:pointer" onclick="abrirFicha(${index})">
+      <div class="card ${modoExclusao ? 'selecionavel' : ''}"
+           style="display:flex; align-items:center; gap:15px; cursor:pointer"
+           onclick="${onclick}">
+        ${checkbox}
         <img src="${f.foto}" style="width:60px;height:60px;border-radius:50%">
         <div>
           <strong>${f.nome}</strong><br>
           <small>${f.departamento}</small>
         </div>
-      </div>`;
+      </div>
+    `;
   });
 }
+
 
 function filtrar(){
   const termo = document.getElementById('search').value.toLowerCase();
@@ -586,9 +678,20 @@ function formatarSalario(input){
       <button onclick="fecharForm()">Cancelar</button>
       <button onclick="adicionarFuncionario()">Salvar</button>
     </div>
+     <button onclick="excluirFuncionario()" 
   </div>
 </div>
 <div id="printArea" class="hidden"></div>
+      <div id="confirmarExclusao">
+  <div class="confirm-card">
+    <h3>Deseja excluir esses funcionários definitivamente?</h3>
+    <div style="display:flex; gap:15px; justify-content:center; margin-top:20px">
+      <button class="btn-nao" onclick="cancelarExclusao()">Não</button>
+      <button class="btn-sim" onclick="confirmarExclusao()">Sim</button>
+    </div>
+  </div>
+</div>
+
 
 </body>
 </html>
